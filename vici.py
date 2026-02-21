@@ -14,6 +14,7 @@ def to_excel_bytes(df):
     buffer.seek(0)
     return buffer
 hoy = datetime.now()
+dia = datetime.now().day
 
 # ===============================
 # Subir archivo
@@ -28,7 +29,8 @@ if archivo:
         df["asignado"] = "NO"
     if "id_asesor" not in df.columns:
         df["id_asesor"] = ""
-
+    if "dia_asignacion" not in df.columns:
+        df["dia_asignacion"] = "" 
     st.success("✅ Base cargada correctamente")
 
     # ===============================
@@ -123,9 +125,11 @@ if archivo:
                     # 👇 asignar EN AMBOS
                     tomar["asignado"] = "SI"
                     tomar["id_asesor"] = asesor
+                    tomar["dia_asignacion"] = dia
 
                     df.loc[tomar.index, "asignado"] = "SI"
                     df.loc[tomar.index, "id_asesor"] = asesor
+                    df.loc[tomar.index, "dia_asignacion"] = dia
 
                     seleccionados.append(tomar)
 
