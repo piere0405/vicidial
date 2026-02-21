@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from io import BytesIO
 from datetime import datetime
+import pytz
 
 st.title("📊 Asignador de Base Vicidial (Multi Asesor)")
 
@@ -13,8 +14,10 @@ def to_excel_bytes(df):
     df.to_excel(buffer, index=False)
     buffer.seek(0)
     return buffer
-hoy = datetime.now()
-dia = datetime.now().day
+tz = pytz.timezone("America/Lima")
+hoy = datetime.now(tz).strftime("%m-%d")
+dia = datetime.now(tz).day
+
 
 # ===============================
 # Subir archivo
