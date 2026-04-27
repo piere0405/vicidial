@@ -45,7 +45,7 @@ with tab1 :
         file_name="Matriz_Enriquecido.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-    with tab 2 :
+    with tab2 :
       st.subheader("Búsqueda de Cliente")
 
     dato = st.number_input(
