@@ -19,32 +19,32 @@ archivos = st.file_uploader(
 )
 tab1,tab2 = st.tabs(["Unificar Enriquecidos","Buscar cliente"])
 with tab1 :
-if archivos:
-    lista_dfs = []
-
-    for archivo in archivos:
-        df = pd.read_excel(archivo)
-        nombre = archivo.name.replace(".xlsx", "")
-
-        if "nombre_archivo" not in df.columns:
-            df["nombre_archivo"] = nombre
-
-        lista_dfs.append(df)
-
-    df_final = pd.concat(lista_dfs, ignore_index=True)
-    st.success("Archivos unidos correctamente")
-    st.subheader("VISTA PREVIA")
-    st.dataframe(df_final)
+    if archivos:
+        lista_dfs = []
     
-    buffer = BytesIO()
-    df_final.to_excel(buffer, index=False, engine="openpyxl")
-    st.download_button(
-        label="Descargar Excel unido",
-        data=buffer.getvalue(),
-        file_name="Matriz_Enriquecido.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-    with tab2 :
+        for archivo in archivos:
+            df = pd.read_excel(archivo)
+            nombre = archivo.name.replace(".xlsx", "")
+    
+            if "nombre_archivo" not in df.columns:
+                df["nombre_archivo"] = nombre
+    
+            lista_dfs.append(df)
+    
+        df_final = pd.concat(lista_dfs, ignore_index=True)
+        st.success("Archivos unidos correctamente")
+        st.subheader("VISTA PREVIA")
+        st.dataframe(df_final)
+        
+        buffer = BytesIO()
+        df_final.to_excel(buffer, index=False, engine="openpyxl")
+        st.download_button(
+            label="Descargar Excel unido",
+            data=buffer.getvalue(),
+            file_name="Matriz_Enriquecido.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+with tab2 :
       st.subheader("Búsqueda de Cliente")
 
     dato = st.number_input(
