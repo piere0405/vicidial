@@ -32,7 +32,7 @@ if archivos:
 
     df_final = pd.concat(lista_dfs, ignore_index=True)
     st.success("Archivos unidos correctamente")
-tab1,tab2 = st.tabs(["Unificar Enriquecidos"],["Buscar cliente"])
+tab1,tab2 = st.tabs(["Unificar Enriquecidos","Buscar cliente"])
 with tab1 :
     st.subheader("VISTA PREVIA")
     st.dataframe(df_final)
