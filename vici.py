@@ -20,7 +20,7 @@ if archivos:
         df = pd.read_excel(archivo)
 
         # Nombre del archivo sin extensión
-        nombre_archivo = os.path.splitext(archivo.name)[0]
+        nombre_archivo = archivo.name.replace(".xlsx", "")
 
         # Agregar columna origen
         df["nombre_archivo"] = nombre_archivo
