@@ -17,7 +17,8 @@ archivos = st.file_uploader(
     type=["xlsx"],
     accept_multiple_files=True
 )
-
+tab1,tab2 = st.tabs(["Unificar Enriquecidos","Buscar cliente"])
+with tab1 :
 if archivos:
     lista_dfs = []
 
@@ -32,8 +33,6 @@ if archivos:
 
     df_final = pd.concat(lista_dfs, ignore_index=True)
     st.success("Archivos unidos correctamente")
-tab1,tab2 = st.tabs(["Unificar Enriquecidos","Buscar cliente"])
-with tab1 :
     st.subheader("VISTA PREVIA")
     st.dataframe(df_final)
     
