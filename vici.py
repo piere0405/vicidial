@@ -17,35 +17,43 @@ archivos = st.file_uploader(
     type=["xlsx"],
     accept_multiple_files=True
 )
-tab1,tab2 = st.tabs(["Unificar Enriquecidos","Buscar cliente"])
-with tab1 :
+
+tab1, tab2 = st.tabs(["Unificar Enriquecidos", "Buscar cliente"])
+
+# Inicializar dataframe vacío
+df_final = pd.DataFrame()
+
+with tab1:
     if archivos:
         lista_dfs = []
-    
+
         for archivo in archivos:
             df = pd.read_excel(archivo)
             nombre = archivo.name.replace(".xlsx", "")
-    
+
             if "nombre_archivo" not in df.columns:
                 df["nombre_archivo"] = nombre
-    
+
             lista_dfs.append(df)
-    
+
         df_final = pd.concat(lista_dfs, ignore_index=True)
+
         st.success("Archivos unidos correctamente")
         st.subheader("VISTA PREVIA")
         st.dataframe(df_final)
-        
+
         buffer = BytesIO()
         df_final.to_excel(buffer, index=False, engine="openpyxl")
+
         st.download_button(
             label="Descargar Excel unido",
             data=buffer.getvalue(),
             file_name="Matriz_Enriquecido.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-with tab2 :
-      st.subheader("Búsqueda de Cliente")
+
+with tab2:
+    st.subheader("Búsqueda de Cliente")
 
     dato = st.number_input(
         "Ingrese DNI (8)",
@@ -54,16 +62,15 @@ with tab2 :
         step=1,
         key="Ingrese un DNI"
     )
-    
+
     if dato == 0:
         st.info("Ingrese un DNI")
-    elif dato < 999999:
+
+    elif dato < 10000000:
         st.warning("⚠️ Número inválido")
-    elif dato > 99999999:
-        st.warning("⚠️ Número inválido")    
-    else:
-        columnas = df_final.columns
-        resultado = df_final.loc[dato, columnas]
+
+    elif not df_final.empty:
+        resultado = df_final[df_final["personal_id"] == dato]
 
         if resultado.empty:
             st.warning("⚠️ Cliente no encontrado")
@@ -71,3 +78,5 @@ with tab2 :
             st.success("✅ Cliente encontrado")
             st.dataframe(resultado, use_container_width=True)
 
+    else:
+        st.warning("⚠️ Primero sube y unifica los archivos")
