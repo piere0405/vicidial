@@ -66,9 +66,6 @@ with tab2:
     if dato == 0:
         st.info("Ingrese un DNI")
 
-    elif dato < 10000000:
-        st.warning("⚠️ Número inválido")
-
     elif not df_final.empty:
         resultado = df_final[df_final["personal_id"] == dato]
 
