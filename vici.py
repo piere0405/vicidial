@@ -18,14 +18,14 @@ archivos = st.file_uploader(
     accept_multiple_files=True
 )
 
-if archivos:
-    lista_dfs = []
-    for archivo in archivos:
-        df = pd.read_excel(archivo)
-        nombre = archivo.name.replace(".xlsx", "")
-         if "nombre_archivo" not in df.columns:
-            df["nombre_archivo"] = nombre
-        lista_dfs.append(df)
+    if archivos:
+        lista_dfs = []
+        for archivo in archivos:
+            df = pd.read_excel(archivo)
+            nombre = archivo.name.replace(".xlsx", "")
+             if "nombre_archivo" not in df.columns:
+                df["nombre_archivo"] = nombre
+            lista_dfs.append(df)
 
     df_final = pd.concat(lista_dfs, ignore_index=True)
     st.success("Archivos unidos correctamente")
