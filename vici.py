@@ -23,10 +23,11 @@ if archivos:
         for archivo in archivos:
             df = pd.read_excel(archivo)
             nombre = archivo.name.replace(".xlsx", "")
-             if "nombre_archivo" not in df.columns:
+            if "nombre_archivo" not in df.columns:
                 df["nombre_archivo"] = nombre
-            lista_dfs.append(df)
-
+                lista_dfs.append(df)
+            else :
+                lista_dfs.append(df)
     df_final = pd.concat(lista_dfs, ignore_index=True)
     st.success("Archivos unidos correctamente")
 tab1,tab2 = st.tabs(["Unificar Enriquecidos"],["Buscar cliente"])
