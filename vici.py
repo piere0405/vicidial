@@ -40,7 +40,7 @@ with tab1:
 
         st.success("Archivos unidos correctamente")
         st.subheader("VISTA PREVIA")
-        st.dataframe(df_final)
+        st.dataframe(df_final.head(10))
 
         buffer = BytesIO()
         df_final.to_excel(buffer, index=False, engine="openpyxl")
