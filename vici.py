@@ -5,7 +5,7 @@ import gc
 
 st.set_page_config(page_title="Unir Excel", layout="wide")
 
-st.title("Unir archivos Excel 🧩")
+st.title("Unir archivos Excel 🧩 v.2.")
 
 st.markdown("""
 <style>
