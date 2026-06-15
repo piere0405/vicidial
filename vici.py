@@ -60,8 +60,8 @@ if st.session_state.df_final is not None:
     df_final = st.session_state.df_final
 
     
-    st.subheader("Número de filas")
-    st.write(len(df_final))
+    st.subheader("Dimensión del DataFrame")
+    st.write(f"Filas: {df_final.shape[0]} | Columnas: {df_final.shape[1]}")
 
   
     csv = df_final.to_csv(index=False).encode("utf-8")
