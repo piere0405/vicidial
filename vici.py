@@ -1,9 +1,35 @@
 import streamlit as st
 import pandas as pd
-import tempfile
-import os
+
+st.set_page_config(page_title="Unir Excel", layout="wide")
 
 st.title("Unir archivos Excel 🧩")
+
+
+@st.cache_data
+def leer_y_unir(archivos):
+    lista = []
+
+    for archivo in archivos:
+        df = pd.read_excel(
+            archivo,
+            engine="openpyxl",
+            dtype=str
+        )
+
+        nombre = archivo.name.replace(".xlsx", "")
+
+        if "nombre_archivo" not in df.columns:
+            df["nombre_archivo"] = nombre
+
+        lista.append(df)
+
+    return pd.concat(lista, ignore_index=True)
+
+
+if "df_final" not in st.session_state:
+    st.session_state.df_final = None
+
 
 archivos = st.file_uploader(
     "Sube tus archivos Excel",
@@ -11,119 +37,41 @@ archivos = st.file_uploader(
     accept_multiple_files=True
 )
 
-if "df_final" not in st.session_state:
-    st.session_state.df_final = None
+# ============================
+# UNIFICAR
+# ============================
+if archivos:
 
-if "archivo_salida" not in st.session_state:
-    st.session_state.archivo_salida = None
+    if st.button("🚀 Unificar archivos"):
 
-tab1, tab2 = st.tabs(["Unificar Enriquecidos", "Buscar cliente"])
+        with st.spinner("Procesando archivos..."):
 
-with tab1:
-
-    if archivos and st.button("Procesar archivos"):
-
-        try:
-
-            lista_dfs = []
-
-            with st.spinner("Leyendo archivos..."):
-
-                for archivo in archivos:
-
-                    df = pd.read_excel(
-                        archivo,
-                        engine="openpyxl"
-                    )
-
-                    nombre = archivo.name.replace(".xlsx", "")
-
-                    if "nombre_archivo" not in df.columns:
-                        df["nombre_archivo"] = nombre
-
-                    lista_dfs.append(df)
-
-            with st.spinner("Uniendo archivos..."):
-
-                df_final = pd.concat(
-                    lista_dfs,
-                    ignore_index=True
-                )
+            df_final = leer_y_unir(archivos)
 
             st.session_state.df_final = df_final
 
-            with st.spinner("Generando Excel..."):
+        st.success(f"Listo ✔️ Registros: {len(df_final):,}")
 
-                temp_file = tempfile.NamedTemporaryFile(
-                    delete=False,
-                    suffix=".xlsx"
-                )
+# ============================
+# RESULTADO
+# ============================
+if st.session_state.df_final is not None:
 
-                ruta_excel = temp_file.name
-                temp_file.close()
+    df_final = st.session_state.df_final
 
-                df_final.to_excel(
-                    ruta_excel,
-                    index=False,
-                    engine="openpyxl"
-                )
+    st.subheader("Vista previa (10 filas máximo)")
 
-                st.session_state.archivo_salida = ruta_excel
+    # SOLO 10 FILAS + SOLO 10 COLUMNAS (más seguro aún)
+    st.dataframe(
+        df_final.iloc[:10, :10],
+        use_container_width=True
+    )
 
-            st.success(
-                f"Proceso completado. Registros: {len(df_final):,}"
-            )
+    csv = df_final.to_csv(index=False).encode("utf-8")
 
-        except Exception as e:
-            st.error(f"Error: {e}")
-
-    if st.session_state.df_final is not None:
-
-        st.subheader("Vista previa")
-
-        st.dataframe(
-            st.session_state.df_final.head(10),
-            use_container_width=True
-        )
-
-        if st.session_state.archivo_salida:
-
-            with open(
-                st.session_state.archivo_salida,
-                "rb"
-            ) as f:
-
-                st.download_button(
-                    "📥 Descargar Excel unido",
-                    data=f,
-                    file_name="Matriz_Enriquecido.xlsx",
-                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                )
-
-with tab2:
-
-    st.subheader("Buscar cliente")
-
-    if st.session_state.df_final is not None:
-
-        dni = st.text_input("Ingrese DNI")
-
-        if dni:
-
-            df = st.session_state.df_final
-
-            resultado = df[
-                df["personal_id"].astype(str) == dni
-            ]
-
-            if resultado.empty:
-                st.warning("Cliente no encontrado")
-            else:
-                st.success("Cliente encontrado")
-                st.dataframe(
-                    resultado,
-                    use_container_width=True
-                )
-
-    else:
-        st.warning("Primero procesa los archivos.")
+    st.download_button(
+        "📥 Descargar CSV",
+        data=csv,
+        file_name="Matriz_Enriquecido.csv",
+        mime="text/csv"
+    )
