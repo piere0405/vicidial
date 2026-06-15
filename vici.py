@@ -59,14 +59,11 @@ if st.session_state.df_final is not None:
 
     df_final = st.session_state.df_final
 
-    st.subheader("Vista previa (10 filas máximo)")
+    
+    st.subheader("Número de filas")
+    st.write(len(df_final))
 
-    # SOLO 10 FILAS + SOLO 10 COLUMNAS (más seguro aún)
-    st.dataframe(
-        df_final.iloc[:10, :10],
-        use_container_width=True
-    )
-
+  
     csv = df_final.to_csv(index=False).encode("utf-8")
 
     st.download_button(
